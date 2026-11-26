@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<form method="post">
+  {% include "version_fields.html" %}
+  <p><button>Save</button>
+     <a href="{{ url_for('papers.show_paper', paper_id=paper_id) }}">Cancel</a></p>
+</form>
+{% endblock %}

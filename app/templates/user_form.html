@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<form method="post">
+  <p>Given name<br><input name="given_name" value="{{ form.get('given_name', '') }}" required></p>
+  <p>Surname<br><input name="surname" value="{{ form.get('surname', '') }}" required></p>
+  <p>Email<br><input type="email" name="email" value="{{ form.get('email', '') }}" required></p>
+  <p>Affiliation<br><input name="affiliation" value="{{ form.get('affiliation', '') }}" required></p>
+  <p>Country<br><input name="country" value="{{ form.get('country', '') }}" required></p>
+  <p>Phone number<br><input name="phone_number" value="{{ form.get('phone_number', '') }}" required></p>
+
+  <fieldset>
+    <legend><label><input type="checkbox" name="is_author"
+      {% if form.get('is_author') %}checked{% endif %}> Author</label></legend>
+    <p>ORCID (optional)<br><input name="orcid" value="{{ form.get('orcid', '') }}"></p>
+    <p>Research areas (one per line)<br>
+      <textarea name="research_areas" rows="3">{{ form.get('research_areas', '') }}</textarea></p>
+  </fieldset>
+
+  <fieldset>
+    <legend><label><input type="checkbox" name="is_reviewer"
+      {% if form.get('is_reviewer') %}checked{% endif %}> Reviewer</label></legend>
+    <p>Years of experience<br>
+      <input type="number" min="0" name="years_experience"
+             value="{{ form.get('years_experience', '') }}"></p>
+    <p>Expertise (one per line)<br>
+      <textarea name="expertise" rows="3">{{ form.get('expertise', '') }}</textarea></p>
+  </fieldset>
+
+  <p><button>Save</button></p>
+</form>
+{% endblock %}

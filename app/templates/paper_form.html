@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<form method="post">
+  <p>Title<br><input name="title" size="60" value="{{ form.get('title', '') }}" required></p>
+  <p>Abstract<br>
+    <textarea name="abstract" rows="4" required>{{ form.get('abstract', '') }}</textarea></p>
+  <p>Submission date<br>
+    <input type="date" name="submission_date" value="{{ form.get('submission_date', '') }}" required></p>
+
+  <p>Status<br>
+    <select name="status">
+      {% for s in statuses %}
+      <option {% if form.get('status') == s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select></p>
+
+  <p>Track<br>
+    <select name="track_id" required>
+      {% for t in tracks %}
+      <option value="{{ t.track_id }}"
+        {% if form.get('track_id')|string == t.track_id|string %}selected{% endif %}>
+        {{ t.acronym }}: {{ t.name }}</option>
+      {% endfor %}
+    </select></p>
+
+  <p>Session (only for accepted papers, same conference as the track)<br>
+    <select name="session_id">
+      <option value="">No session</option>
+      {% for s in sessions %}
+      <option value="{{ s.session_id }}"
+        {% if form.get('session_id')|string == s.session_id|string %}selected{% endif %}>
+        {{ s.session_id }}. {{ s.acronym }}: {{ s.title }}</option>
+      {% endfor %}
+    </select></p>
+
+  <p>Keywords (one per line)<br>
+    <textarea name="keywords" rows="3" required>{{ form.get('keywords', '') }}</textarea></p>
+
+  <h2>Authors</h2>
+  <p>Enter a position (1, 2, 3...) next to each author of this paper. Leave the others empty.</p>
+  <table>
+    <tr><th>Position</th><th>Corresponding</th><th>Author</th></tr>
+    {% for a in authors %}
+    <tr>
+      <td><input type="number" min="1" name="position_{{ a.author_id }}"
+                 value="{{ form.get('position_' ~ a.author_id, '') }}"></td>
+      <td><input type="radio" name="corresponding" value="{{ a.author_id }}"
+        {% if form.get('corresponding')|string == a.author_id|string %}checked{% endif %}></td>
+      <td>{{ a.author_id }}. {{ a.given_name }} {{ a.surname }} ({{ a.email }})</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  {% if is_new %}
+    <h2>First version</h2>
+    {% include "version_fields.html" %}
+  {% endif %}
+
+  <p><button>Save</button></p>
+</form>
+{% endblock %}

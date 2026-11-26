@@ -1,0 +1,12 @@
+<!-- Version fields, used by both the new-paper form and the version form. -->
+{% if is_new %}
+<p>Version number<br>
+  <input type="number" min="1" name="version_no" value="{{ form.get('version_no', '') }}" required></p>
+{% endif %}
+<p>File location<br>
+  <input name="file_location" size="50" value="{{ form.get('file_location', '') }}" required></p>
+<p>Upload date and time (UTC)<br>
+  <input type="datetime-local" step="1" name="uploaded_at"
+         value="{{ form.get('uploaded_at', '') }}" required></p>
+<p>Change note (optional)<br>
+  <input name="change_note" size="50" value="{{ form.get('change_note', '') }}"></p>

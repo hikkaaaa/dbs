@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<form method="post">
+  <p>Paper<br>
+    <select name="paper_id">
+      {% for p in papers %}
+      <option value="{{ p.paper_id }}"
+        {% if form.get('paper_id')|string == p.paper_id|string %}selected{% endif %}>
+        {{ p.paper_id }}. {{ p.title }}</option>
+      {% endfor %}
+    </select></p>
+
+  <p>Reviewer<br>
+    <select name="reviewer_id">
+      {% for r in reviewers %}
+      <option value="{{ r.reviewer_id }}"
+        {% if form.get('reviewer_id')|string == r.reviewer_id|string %}selected{% endif %}>
+        {{ r.reviewer_id }}. {{ r.given_name }} {{ r.surname }}</option>
+      {% endfor %}
+    </select></p>
+
+  <p>Overall score (1 to 5)<br>
+    <input type="number" min="1" max="5" name="overall_score"
+           value="{{ form.get('overall_score', '') }}" required></p>
+
+  <p>Recommendation<br>
+    <select name="recommendation">
+      {% for choice in ['accept', 'reject'] %}
+      <option {% if form.get('recommendation') == choice %}selected{% endif %}>{{ choice }}</option>
+      {% endfor %}
+    </select></p>
+
+  <p>Comments for authors<br>
+    <textarea name="comments_for_authors" rows="4" required>{{ form.get('comments_for_authors', '') }}</textarea></p>
+  <p>Confidential comments (optional)<br>
+    <textarea name="confidential_comments" rows="3">{{ form.get('confidential_comments', '') }}</textarea></p>
+  <p>Review date<br>
+    <input type="date" name="review_submission_date"
+           value="{{ form.get('review_submission_date', '') }}" required></p>
+
+  <p><button>Save</button></p>
+</form>
+{% endblock %}

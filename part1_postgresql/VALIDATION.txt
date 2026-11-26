@@ -1,0 +1,93 @@
+PART 1 VALIDATION RECORD
+Date: November 25, 2026
+
+RESULT: ALL DELIVERED SQL SCRIPTS PASSED THE CHECKS BELOW.
+
+ENGINE AND LIMITS
+
+Executed on PostgreSQL 17.5 using @electric-sql/pglite 0.3.14, a local embedded
+WebAssembly build of the PostgreSQL engine. Scripts were executed as full SQL
+files, including transactions, DO blocks, indexes, foreign keys and the view.
+No SQLite substitution or simulated SQL parser was used.
+
+A conventional native PostgreSQL test server could not initialize in this
+execution environment because operating-system shared-memory access was denied.
+No global PostgreSQL installation or existing user database was changed.
+psql/pgAdmin connectivity, a native pg_dump export, Python/SQLAlchemy integration,
+web application checks and deployment were not tested here. Teammates must run
+04_verify.sql and 05_constraint_tests.sql on their actual PostgreSQL server and
+test their integration. The supplied 00_restore.sql is an equivalent plain SQL
+reconstruction, not an output falsely attributed to pg_dump.
+
+EXECUTION AND REPEATABILITY
+
+PASS 01_schema.sql on an empty database.
+PASS 02_seed.sql after schema creation.
+PASS 03_schedule_view.sql after population.
+PASS 04_verify.sql on that original seed.
+PASS 05_constraint_tests.sql; all changes rolled back.
+PASS 04_verify.sql again after constraint/deletion tests.
+PASS 02_seed.sql again on an already populated database.
+PASS 04_verify.sql after repeat seeding.
+PASS 00_restore.sql against the existing complete database.
+PASS 04_verify.sql after rebuild.
+PASS 00_restore.sql a second time against the complete database.
+PASS 04_verify.sql after the second rebuild.
+
+44 ORIGINAL-SEED ASSERTIONS
+
+- Exact counts for all 15 tables.
+- All users have roles; author-only, reviewer-only and overlapping roles exist.
+- All required minimum child records exist in the seed.
+- Exactly one corresponding author per seed paper.
+- No self-reviews and no invalid session assignments in the seed.
+- Coordinator/chair pool membership is correct.
+- All five paper statuses, multiple authors, multiple versions and version gaps.
+- Empty tracks, a no-paper conference, reviewers without reviews.
+- Accepted papers with and without sessions.
+- Correct named-person, deletion, update, phrase and expertise fixtures.
+- Varied review counts and correct above-average reviewer population.
+- The schedule view contains exactly the two assigned accepted papers.
+
+24 BAD-DATA REJECTION TESTS
+
+PASS duplicate user email; duplicate author position; duplicate reviewer-paper
+pair; duplicate paper version; invalid paper status; scores below/above range;
+invalid recommendation; zero author position; zero version number; negative
+experience; reversed conference dates; equal/reversed session times; NULL paper
+title; missing review score/date; blank author comments; nonexistent parent track;
+second corresponding author; coordinator/chair outside conference pool; deletion
+of a referenced author; deletion of a populated conference.
+
+2 DELETION-ACTION TESTS
+
+PASS deleting paper 6 removes its authorship, keywords, versions and review while
+preserving users, tracks, conferences and unrelated papers.
+PASS deleting session 1 preserves paper 1 and sets its session_id to NULL.
+Both tests roll back, followed by the full original-seed verification.
+
+PART 2 DATA READINESS (SQL-LEVEL CHECK, NOT A PART 2 PYTHON SUBMISSION)
+
+PASS 3.1: Arman's email identifies one row; phone becomes +77773414141.
+PASS 3.2: One conditional UPDATE changes all three deadlines; both branches run.
+PASS 4.1: Amina's withdrawn papers 6 and 11 and their dependent rows are removed;
+           exact remaining counts match TEAM_HANDOFF.txt; parent records remain.
+PASS 4.2: Empty Astana sessions 2 and 5 deleted; sessions 1,3,4 remain.
+PASS 5.1: Accepted paper IDs 1,2,7,12; one corresponding-author row per paper.
+PASS 5.2: Case-insensitive phrase matches paper IDs 1,4,7.
+PASS 5.3: Paper 1 versions returned in order 4,2,1.
+PASS 5.4: Conference 1/Databases/3 years returns reviewer IDs 1,6,7,8.
+PASS 6.1: Track paper/author counts match the handoff, including both empty tracks.
+PASS 6.2: Reviewer counts match, including zero-review reviewers and NULL means.
+PASS 6.3: Correct conference totals and review-weighted averages; empty conference.
+PASS 6.4: Mean is 2 reviews over all 8 reviewers; IDs 6,7,8 exceed the mean.
+PASS 7: Both populated conferences have 66.67%; empty conference has NULL.
+PASS 8: Ordered schedule view returns papers 1 and 7 only.
+PASS mutations roll back independently and final reseeding passes verification.
+PASS generated user ID after seeding is 13, avoiding supplied seed IDs.
+
+REQUIRED APPLICATION RULES ARE NOT CLAIMED AS IMPLEMENTED
+
+The original seed obeys no-self-review and valid-session-assignment rules, but
+the application must enforce them on writes and relevant subsequent changes.
+See TEAM_HANDOFF.txt for precise triggers to validate and concrete rejection demos.

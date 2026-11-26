@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Paper {{ paper.paper_id }}: {{ paper.title }}</h1>
+<a href="{{ url_for('papers.edit_paper', paper_id=paper.paper_id) }}">Edit paper, authors and keywords</a>
+
+<p><b>Status:</b> {{ paper.status }}</p>
+<p><b>Conference / track:</b> {{ paper.acronym }} / {{ paper.track_name }}</p>
+<p><b>Session:</b> {{ paper.session_title or 'not assigned' }}</p>
+<p><b>Submitted:</b> {{ paper.submission_date }}</p>
+<p><b>Abstract:</b> {{ paper.abstract }}</p>
+<p><b>Keywords:</b> {{ keywords | map(attribute='keyword') | join(', ') }}</p>
+
+<h2>Authors</h2>
+<table>
+  <tr><th>Position</th><th>Name</th><th>Email</th><th>Corresponding</th></tr>
+  {% for a in authors %}
+  <tr>
+    <td>{{ a.author_position }}</td>
+    <td>{{ a.given_name }} {{ a.surname }}</td>
+    <td>{{ a.email }}</td>
+    <td>{{ 'Yes' if a.is_corresponding else '' }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h2>Versions</h2>
+<a href="{{ url_for('papers.create_version', paper_id=paper.paper_id) }}">+ New version</a>
+<table>
+  <tr><th>Version</th><th>File location</th><th>Uploaded (UTC)</th><th>Change note</th>
+      <th>Actions</th></tr>
+  {% for v in versions %}
+  <tr>
+    <!-- Versions are sorted from highest to lowest, so the first one is current. -->
+    <td>{{ v.version_no }} {{ '(current)' if loop.first }}</td>
+    <td>{{ v.file_location }}</td>
+    <td>{{ v.uploaded_utc }}</td>
+    <td>{{ v.change_note or '' }}</td>
+    <td>
+      <a href="{{ url_for('papers.edit_version', paper_id=paper.paper_id, version_no=v.version_no) }}">Edit</a>
+      <form method="post" action="{{ url_for('papers.delete_version', paper_id=paper.paper_id, version_no=v.version_no) }}">
+        <button>Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

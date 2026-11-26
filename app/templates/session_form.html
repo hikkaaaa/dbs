@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<form method="post">
+  <p>Conference<br>
+    <select name="conference_id">
+      {% for c in conferences %}
+      <option value="{{ c.conference_id }}"
+        {% if form.get('conference_id')|string == c.conference_id|string %}selected{% endif %}>
+        {{ c.conference_id }}. {{ c.acronym }} ({{ c.city }})</option>
+      {% endfor %}
+    </select></p>
+
+  <p>Title<br><input name="title" size="50" value="{{ form.get('title', '') }}" required></p>
+  <p>Date<br>
+    <input type="date" name="session_date" value="{{ form.get('session_date', '') }}" required></p>
+  <p>Start time<br>
+    <input type="time" name="start_time" value="{{ form.get('start_time', '') }}" required></p>
+  <p>End time<br>
+    <input type="time" name="end_time" value="{{ form.get('end_time', '') }}" required></p>
+  <p>Room<br><input name="room_label" value="{{ form.get('room_label', '') }}" required></p>
+
+  <p>Chair (must be in the conference's reviewer pool)<br>
+    <select name="chair_id">
+      {% for c in chairs %}
+      <option value="{{ c.user_id }}"
+        {% if form.get('chair_id')|string == c.user_id|string %}selected{% endif %}>
+        {{ c.given_name }} {{ c.surname }} (pools: {{ c.pools }})</option>
+      {% endfor %}
+    </select></p>
+
+  <p><button>Save</button></p>
+</form>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Sessions</h1>
+<a href="{{ url_for('sessions.create_session') }}">+ New session</a>
+<p>To put a paper in a session, edit the paper.</p>
+<table>
+  <tr><th>ID</th><th>Conference</th><th>Title</th><th>Date</th><th>Time</th><th>Room</th>
+      <th>Chair</th><th>Papers</th><th>Actions</th></tr>
+  {% for s in sessions %}
+  <tr>
+    <td>{{ s.session_id }}</td>
+    <td>{{ s.acronym }}</td>
+    <td>{{ s.title }}</td>
+    <td>{{ s.session_date }}</td>
+    <td>{{ s.start_time.strftime('%H:%M') }} – {{ s.end_time.strftime('%H:%M') }}</td>
+    <td>{{ s.room_label }}</td>
+    <td>{{ s.given_name }} {{ s.surname }}</td>
+    <td>{{ s.papers }}</td>
+    <td>
+      <a href="{{ url_for('sessions.edit_session', session_id=s.session_id) }}">Edit</a>
+      <form method="post" action="{{ url_for('sessions.delete_session', session_id=s.session_id) }}">
+        <button>Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

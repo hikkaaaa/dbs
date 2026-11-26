@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Users</h1>
+<a href="{{ url_for('users.create_user') }}">+ New user</a>
+<table>
+  <tr><th>ID</th><th>Name</th><th>Email</th><th>Affiliation</th><th>Country</th>
+      <th>Phone</th><th>Roles</th><th>Actions</th></tr>
+  {% for u in users %}
+  <tr>
+    <td>{{ u.user_id }}</td>
+    <td>{{ u.given_name }} {{ u.surname }}</td>
+    <td>{{ u.email }}</td>
+    <td>{{ u.affiliation }}</td>
+    <td>{{ u.country }}</td>
+    <td>{{ u.phone_number }}</td>
+    <td>{% if u.is_author %}Author{% endif %} {% if u.is_reviewer %}Reviewer{% endif %}</td>
+    <td>
+      <a href="{{ url_for('users.edit_user', user_id=u.user_id) }}">View / Edit</a>
+      <form method="post" action="{{ url_for('users.delete_user', user_id=u.user_id) }}">
+        <button>Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
